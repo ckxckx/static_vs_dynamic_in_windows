@@ -1,0 +1,83 @@
+
+Situation 1: 产生一个静态库，这个StaticLibrary.lib里既有函数符号又有函数实现
+cl /c MeOtherCPlusPlusFile.cpp  # 产生.obj
+lib /out:StaticLibrary.lib MeOtherCPlusPlusFile.obj   #产生.lib
+
+
+Situation 2：
+cl /LD /FeDynamicLibrary.dll MeOtherCPlusPlusFile.cpp   #这一步产生.dll和.lib,这个lib里面仅有符号，size要比situation1小的多
+# 注意/Fe是选项输出的是DynamicLibrary.dll
+
+
+
+无论S1还是S2都用下面形式命令编译链接，根据.lib种类不同, 
+产生的mainer.exe分别为静态链接无需依赖StaticLibrary和动态链接需要以来DynamicLibrary.dll
+cl mainer.cpp /link StaticLibrary.lib
+cl mainer.cpp /link DynamicLibrary.lib
+
+
+
+
+
+
+
+
+
+---------------------------------
+static
+----------------------------------
+C:\Users\76588\ckx\static_vs_dynamic\static>dumpbin /dependents mainer.exe
+Microsoft (R) COFF/PE Dumper Version 14.00.24234.1
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file mainer.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+
+  Summary
+
+        2000 .data
+        1000 .gfids
+        E000 .rdata
+        2000 .reloc
+       1D000 .text
+        1000 .tls
+
+
+
+-------------------------
+dynamic
+-------------------------
+
+C:\Users\76588\ckx\static_vs_dynamic\dynamic>dumpbin /dependents mainer.exe
+Microsoft (R) COFF/PE Dumper Version 14.00.24234.1
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file mainer.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    DynamicLibrary.dll
+    KERNEL32.dll
+
+  Summary
+
+        2000 .data
+        1000 .gfids
+        6000 .rdata
+        1000 .reloc
+        C000 .text
+
+C:\Users\76588\ckx\static_vs_dynamic\dynamic>
+
+
+
+-------------------------------------------
